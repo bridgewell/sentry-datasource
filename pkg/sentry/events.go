@@ -7,11 +7,6 @@ import (
 	"time"
 )
 
-type SentryEvents struct {
-	Data []SentryEvent          `json:"data"`
-	Meta map[string]interface{} `json:"meta"`
-}
-
 type SentryEvent struct {
 	ID              string                 `json:"eventID"`
 	Title           string                 `json:"title"`
@@ -98,8 +93,8 @@ func (gei *GetEventsInput) ToQuery() string {
 }
 
 func (sc *SentryClient) GetEvents(gei GetEventsInput) ([]SentryEvent, string, error) {
-	var out SentryEvents
+	var out []SentryEvent
 	executedQueryString := gei.ToQuery()
 	err := sc.Fetch(executedQueryString, &out)
-	return out.Data, sc.BaseURL + executedQueryString, err
+	return out, sc.BaseURL + executedQueryString, err
 }
