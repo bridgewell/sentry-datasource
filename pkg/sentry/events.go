@@ -13,17 +13,34 @@ type SentryEvents struct {
 }
 
 type SentryEvent struct {
-	ID              string    `json:"id"`
-	Title           string    `json:"title"`
-	Project         string    `json:"project"`
-	ProjectId       int64     `json:"project.id"`
-	Release         string    `json:"release"`
-	Count           int64     `json:"count()"`
-	EventsPerMinute float64   `json:"epm()"`
-	LastSeen        time.Time `json:"last_seen()"`
-	Level           string    `json:"level"`
-	EventType       string    `json:"event.type"`
-	Platform        string    `json:"platform"`
+	ID              string                 `json:"eventID"`
+	Title           string                 `json:"title"`
+	Count           int64                  `json:"count()"`
+	EventsPerMinute float64                `json:"epm()"`
+	Level           string                 `json:"level"`
+	EventType       string                 `json:"event.type"`
+	Platform        string                 `json:"platform"`
+	IDHex           string                 `json:"id.hex"`
+	ProjectId       int64                  `json:"issue.project_id"`
+	GroupID         string                 `json:"groupID"`
+	Timestamp       time.Time              `json:"timestamp"`
+	Received        time.Time              `json:"received"`
+	Dist            string                 `json:"dist"`
+	Transaction     string                 `json:"transaction"`
+	DataModules     map[string]interface{} `json:"data.modules"`
+	GetTypeDisplay  string                 `json:"get_type_display"`
+	Message         string                 `json:"message"`
+	Metadata        map[string]interface{} `json:"metadata"`
+	Tags            []interface{}          `json:"tags"`
+	Entries         []Entry                `json:"entries"`
+	DataContexts    map[string]interface{} `json:"data.contexts"`
+	DataExtra       map[string]interface{} `json:"data.extra"`
+	DataUser        string                 `json:"data.user"`
+}
+
+type Entry struct {
+	Type string                 `json:"type"`
+	Data map[string]interface{} `json:"data"`
 }
 
 type GetEventsInput struct {
@@ -56,7 +73,7 @@ func getRequiredFields() []string {
 }
 
 func (gei *GetEventsInput) ToQuery() string {
-	urlPath := fmt.Sprintf("/api/0/organizations/%s/events/?", gei.OrganizationSlug)
+	urlPath := fmt.Sprintf("/api/0/projects/%s/%s/events/?", gei.OrganizationSlug, gei.ProjectIds[0])
 	if gei.Limit < 1 || gei.Limit > 100 {
 		gei.Limit = 100
 	}
